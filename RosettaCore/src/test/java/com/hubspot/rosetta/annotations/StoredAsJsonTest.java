@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.node.NullNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.hubspot.rosetta.Rosetta;
+import com.hubspot.rosetta.beans.CustomBean;
 import com.hubspot.rosetta.beans.InnerBean;
 import com.hubspot.rosetta.beans.StoredAsJsonBean;
 import org.junit.Before;
@@ -268,5 +269,25 @@ public class StoredAsJsonTest {
 
     StoredAsJsonBean bean = Rosetta.getMapper().treeToValue(node, StoredAsJsonBean.class);
     assertThat(bean.getBinaryFieldWithDefault().getStringProperty()).isEqualTo("value");
+  }
+
+  @Test
+  public void testCustomFieldSerialization() {
+    CustomBean custom = new CustomBean();
+    custom.setId(123);
+
+    bean.setCustomField(custom);
+
+    TextNode expected = TextNode.valueOf("{\"idValue\":123}");
+    assertThat(Rosetta.getMapper().valueToTree(bean).get("customField")).isEqualTo(expected);
+  }
+
+  @Test
+  public void testCustomFieldDeserialization() throws JsonProcessingException {
+    ObjectNode node = Rosetta.getMapper().createObjectNode();
+    node.put("customField", TextNode.valueOf("{\"idValue\":123}"));
+
+    StoredAsJsonBean bean = Rosetta.getMapper().treeToValue(node, StoredAsJsonBean.class);
+    assertThat(bean.getCustomField().getId()).isEqualTo(123);
   }
 }

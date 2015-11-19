@@ -19,6 +19,9 @@ public class StoredAsJsonBean {
   @StoredAsJson(binary = true, empty = "{\"stringProperty\":\"value\"}")
   private InnerBean binaryFieldWithDefault;
 
+  @StoredAsJson
+  private CustomBean customField;
+
   public InnerBean getAnnotatedField() {
     return annotatedField;
   }
@@ -86,6 +89,15 @@ public class StoredAsJsonBean {
 
   public StoredAsJsonBean setBinaryFieldWithDefault(InnerBean binaryFieldWithDefault) {
     this.binaryFieldWithDefault = binaryFieldWithDefault;
+    return this;
+  }
+
+  public CustomBean getCustomField() {
+    return customField;
+  }
+
+  public StoredAsJsonBean setCustomField(CustomBean customField) {
+    this.customField = customField;
     return this;
   }
 }
