@@ -56,6 +56,7 @@ public class RosettaMapper<T> {
       String label = metadata.getColumnLabel(i);
 
       final Object value;
+
       // calling getObject on a BLOB/CLOB produces weird results
       switch (metadata.getColumnType(i)) {
         case Types.BLOB:
@@ -65,7 +66,12 @@ public class RosettaMapper<T> {
           value = rs.getString(i);
           break;
         default:
-          value = rs.getObject(i);
+          // workaround for http://bugs.mysql.com/bug.php?id=80631
+          if (metadata.getColumnTypeName(i).equals("JSON")) {
+            value = rs.getBytes(i);
+          } else {
+            value = rs.getObject(i);
+          }
       }
 
       // don't use table name extractor because we don't want aliased table name
